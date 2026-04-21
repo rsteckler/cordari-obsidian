@@ -1,0 +1,11 @@
+{
+  "id": "applaud-notes",
+  "name": "Applaud",
+  "version": "0.1.0",
+  "minAppVersion": "1.4.0",
+  "description": "Sync your Applaud voice-recording summaries, transcripts, and audio into your vault.",
+  "author": "Applaud",
+  "authorUrl": "https://app.applaudnotes.com",
+  "fundingUrl": "https://app.applaudnotes.com",
+  "isDesktopOnly": true
+}
