@@ -6,6 +6,19 @@ import type { RecordingDetail } from "./types.js";
 // renames (either side) never create duplicates — we rewrite the existing
 // file in place, same applaud_id → same TFile.
 
+/**
+ * Bump this any time composeMarkdown's layout or wording changes. Files
+ * whose frontmatter `applaud_writer_version` is below this value get
+ * re-synced so stale content (old stubs, dropped fields, reshaped
+ * sections) doesn't linger in the vault forever.
+ *
+ * History:
+ *   v2 — multi-summary support; switched from `summaryMarkdown` to
+ *        `summaries[]` rendering; new "_summary pending_" stub text
+ *        replaced "_(no summary available)_".
+ */
+export const WRITER_VERSION = 2;
+
 export interface WriterOpts {
   app: App;
   root: string;
@@ -108,6 +121,7 @@ export class VaultWriter {
       "---",
       `applaud_id: ${d.id}`,
       `applaud_url: ${this.opts.serverBaseUrl.replace(/\/$/, "")}/recordings/${d.id}`,
+      `applaud_writer_version: ${WRITER_VERSION}`,
       `date: ${new Date(d.startTime).toISOString()}`,
       `duration_ms: ${d.durationMs}`,
       `filename: ${yamlEscape(d.filename)}`,
@@ -120,18 +134,21 @@ export class VaultWriter {
     const audioEmbed = d.audioDownloadedAt ? `![[${audioRelName}]]` : "_audio not yet downloaded_";
 
     const summarySection =
-      d.summaryMarkdown && d.summaryMarkdown.trim()
-        ? `## Summary\n\n${d.summaryMarkdown.trim()}`
-        : d.summaryDownloadedAt === null
-          ? "## Summary\n\n_summary pending_"
-          : "## Summary\n\n_(no summary available)_";
+      d.summaries.length > 0
+        ? d.summaries
+            .map((s) => {
+              const label = s.tabName ?? s.title ?? "Summary";
+              return `## ${label}\n\n${(s.contentText ?? "").trim()}`;
+            })
+            .join("\n\n")
+        : "## Summary\n\n_summary pending_";
 
     const transcriptSection =
       d.transcriptText && d.transcriptText.trim()
         ? `## Transcript\n\n${d.transcriptText.trim()}`
-        : d.transcriptDownloadedAt === null
-          ? "## Transcript\n\n_transcript pending_"
-          : "## Transcript\n\n_(no transcript available)_";
+        : d.hasTranscript
+          ? "## Transcript\n\n_(no transcript available)_"
+          : "## Transcript\n\n_transcript pending_";
 
     return [yaml, title, "", audioEmbed, "", summarySection, "", transcriptSection, ""].join("\n");
   }

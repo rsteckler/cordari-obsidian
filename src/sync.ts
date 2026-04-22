@@ -1,7 +1,7 @@
 import { Notice, normalizePath, type App, type TFile } from "obsidian";
 import { ApiError, type ApiClient } from "./api.js";
 import type { RecordingRow } from "./types.js";
-import { buildBaseName, VaultWriter } from "./writer.js";
+import { buildBaseName, VaultWriter, WRITER_VERSION } from "./writer.js";
 
 export interface SyncOpts {
   app: App;
@@ -14,6 +14,7 @@ export interface SyncOpts {
 interface LocalEntry {
   filename: string;
   mdPath: string;
+  writerVersion: number;
 }
 
 /**
@@ -36,7 +37,12 @@ function buildLocalIndex(app: App, root: string): Map<string, LocalEntry> {
       | undefined;
     const id = typeof fm?.applaud_id === "string" ? fm.applaud_id : null;
     const filename = typeof fm?.filename === "string" ? fm.filename : null;
-    if (id && filename) cache.set(id, { filename, mdPath: f.path });
+    // Missing / non-numeric version means the file was written by a
+    // pre-versioning plugin build; treat as v0 so reasonToSync triggers
+    // a rewrite on the next pass.
+    const rawVersion = fm?.applaud_writer_version;
+    const writerVersion = typeof rawVersion === "number" ? rawVersion : 0;
+    if (id && filename) cache.set(id, { filename, mdPath: f.path, writerVersion });
   }
   return cache;
 }
@@ -136,6 +142,11 @@ function reasonToSync(
   const local = localIndex.get(row.id);
   if (!local) return "local-missing";
   if (local.filename !== row.filename) return "filename-drift";
+
+  // Writer bumps WRITER_VERSION whenever composeMarkdown's layout or
+  // wording changes. Files written by older plugin builds get rewritten
+  // so stale stubs / removed fields don't linger in the vault.
+  if (local.writerVersion < WRITER_VERSION) return "writer-version-drift";
 
   // Defensive: the frontmatter says there's a local file, but the TFile is
   // actually gone from the adapter (rare — cache races, external sync

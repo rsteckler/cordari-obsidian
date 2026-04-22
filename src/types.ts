@@ -21,17 +21,14 @@ export interface RecordingRow {
   serialNumber: string;
   folder: string;
   audioPath: string | null;
-  transcriptPath: string | null;
-  summaryPath: string | null;
-  metadataPath: string | null;
   audioDownloadedAt: number | null;
-  transcriptDownloadedAt: number | null;
-  summaryDownloadedAt: number | null;
   /** epoch ms — sort key for incremental polling. */
   ingestedAt: number;
   isHistorical: boolean;
   isTrash: boolean;
   lastError: string | null;
+  hasTranscript: boolean;
+  summaryCount: number;
   status:
     | "historical"
     | "pending_audio"
@@ -39,6 +36,15 @@ export interface RecordingRow {
     | "pending_summary"
     | "complete"
     | "error";
+}
+
+export interface Summary {
+  id: string;
+  source: "plaud" | "applaud";
+  title: string | null;
+  tabName: string | null;
+  plaudTemplateId: string | null;
+  contentText: string;
 }
 
 export interface RecordingDetailResponse {
@@ -49,8 +55,7 @@ export interface RecordingDetailResponse {
 
 export interface RecordingDetail extends RecordingRow {
   transcriptText: string | null;
-  summaryMarkdown: string | null;
-  metadata: unknown;
+  summaries: Summary[];
 }
 
 export interface DeviceCodeResponse {
