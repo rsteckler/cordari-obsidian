@@ -13,7 +13,7 @@ export default class CordariPlugin extends Plugin {
 
     this.addSettingTab(new CordariSettingTab(this.app, this));
 
-    this.addRibbonIcon("refresh-cw", "Sync Cordari recordings", () => {
+    this.addRibbonIcon("refresh-cw", "Cordari: sync recordings", () => {
       void this.syncNow();
     });
 
