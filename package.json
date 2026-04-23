@@ -1,7 +1,6 @@
 {
-  "name": "@cordari/obsidian",
+  "name": "cordari-obsidian",
   "version": "0.1.0",
-  "private": true,
   "description": "Cordari Obsidian plugin",
   "main": "dist/main.js",
   "scripts": {

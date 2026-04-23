@@ -79,11 +79,10 @@ export default class CordariPlugin extends Plugin {
     }
     this.syncing = true;
     try {
-      const client = createClient(this.settings.serverUrl, this.settings.token);
+      const client = createClient(this.settings.token);
       await runSync({
         app: this.app,
         client,
-        serverBaseUrl: this.settings.serverUrl,
         root: this.settings.root,
         onUnauthorized: () => {
           new Notice("Cordari: connection expired. Re-link from Settings → Cordari.");

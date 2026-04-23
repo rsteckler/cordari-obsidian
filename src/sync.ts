@@ -6,7 +6,6 @@ import { buildBaseName, VaultWriter, WRITER_VERSION } from "./writer.js";
 export interface SyncOpts {
   app: App;
   client: ApiClient;
-  serverBaseUrl: string;
   root: string;
   onUnauthorized: () => void;
 }
@@ -61,7 +60,6 @@ export async function runSync(opts: SyncOpts): Promise<void> {
   const writer = new VaultWriter({
     app: opts.app,
     root: opts.root,
-    serverBaseUrl: opts.serverBaseUrl,
   });
 
   const localIndex = buildLocalIndex(opts.app, opts.root);

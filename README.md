@@ -36,8 +36,8 @@ to Cordari.
 
 ### Side-load (for testing or while the marketplace listing is pending)
 
-1. Build: `pnpm --filter @cordari/obsidian build` from the repo root.
-2. Copy `dist/main.js`, `manifest.json`, and `versions.json` into
+1. Build: `npm install && npm run build` from the repo root.
+2. Copy `dist/main.js`, `manifest.json`, and `styles.css` into
    `<your-vault>/.obsidian/plugins/cordari-notes/`.
 3. Obsidian → Settings → Community plugins → turn off Restricted mode,
    refresh the installed plugins list, enable **Cordari**.
@@ -56,8 +56,6 @@ requires re-linking next time.
 
 ## Settings
 
-- **Server URL** — defaults to `https://app.cordari.ai`. Change only
-  if you self-host Cordari.
 - **Vault folder** — where recording files live. Default `Cordari`.
 - **Auto-sync interval** — minutes between polls. Minimum 1, default 5.
 - **Sync now** — runs the loop immediately (also available as a ribbon

@@ -3,7 +3,6 @@ import type CordariPlugin from "./main.js";
 import { createClient } from "./api.js";
 
 export interface CordariSettings {
-  serverUrl: string;
   token: string | null;
   root: string;
   pollMinutes: number;
@@ -12,7 +11,6 @@ export interface CordariSettings {
 }
 
 export const DEFAULT_SETTINGS: CordariSettings = {
-  serverUrl: "https://app.cordari.ai",
   token: null,
   root: "Cordari",
   pollMinutes: 5,
@@ -29,22 +27,7 @@ export class CordariSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    containerEl.createEl("h2", { text: "Cordari" });
-
     const connected = !!this.plugin.settings.token;
-
-    new Setting(containerEl)
-      .setName("Server URL")
-      .setDesc("Only change this if you self-host Cordari.")
-      .addText((text) =>
-        text
-          .setPlaceholder("https://app.cordari.ai")
-          .setValue(this.plugin.settings.serverUrl)
-          .onChange(async (value) => {
-            this.plugin.settings.serverUrl = value.trim() || "https://app.cordari.ai";
-            await this.plugin.saveSettings();
-          }),
-      );
 
     new Setting(containerEl)
       .setName("Vault folder")
@@ -111,7 +94,9 @@ export class CordariSettingTab extends PluginSettingTab {
       .addButton((btn) =>
         btn
           .setButtonText("Sync now")
-          .onClick(() => this.plugin.syncNow()),
+          .onClick(() => {
+            void this.plugin.syncNow();
+          }),
       );
   }
 }
@@ -151,7 +136,7 @@ class DeviceLinkModal extends Modal {
   }
 
   private async start(): Promise<void> {
-    const client = createClient(this.plugin.settings.serverUrl, null);
+    const client = createClient(null);
     try {
       const code = await client.startDeviceCode("Obsidian");
       this.userCode = code.user_code;
@@ -172,31 +157,27 @@ class DeviceLinkModal extends Modal {
     this.contentEl.createEl("p", {
       text: "Open the link below to authorize this vault. We'll pick up the approval automatically.",
     });
-    const codeEl = this.contentEl.createEl("p");
-    codeEl.style.textAlign = "center";
-    codeEl.style.fontSize = "2em";
-    codeEl.style.letterSpacing = "0.2em";
-    codeEl.style.fontFamily = "monospace";
-    codeEl.setText(this.userCode);
+    this.contentEl.createEl("p", {
+      text: this.userCode,
+      cls: "cordari-device-code",
+    });
 
     const link = this.contentEl.createEl("a", {
       text: "Open authorization page",
       href: this.verificationUrl,
+      cls: "cordari-device-link",
     });
-    link.style.display = "block";
-    link.style.textAlign = "center";
-    link.style.marginTop = "1em";
     link.setAttr("target", "_blank");
     link.setAttr("rel", "noopener noreferrer");
 
     this.contentEl.createEl("p", {
       text: "Waiting for approval…",
-      cls: "cordari-pending",
-    }).style.textAlign = "center";
+      cls: "cordari-device-pending",
+    });
   }
 
   private async poll(deviceCode: string): Promise<void> {
-    const client = createClient(this.plugin.settings.serverUrl, null);
+    const client = createClient(null);
     try {
       const r = await client.pollDeviceToken(deviceCode, "Obsidian");
       if (r.access_token) {

@@ -1,4 +1,5 @@
 import { normalizePath, TFile, type App } from "obsidian";
+import { CORDARI_SERVER_URL } from "./api.js";
 import type { RecordingDetail } from "./types.js";
 
 // Writes the per-recording markdown + audio into the vault and keeps them
@@ -27,7 +28,6 @@ export const WRITER_VERSION = 3;
 export interface WriterOpts {
   app: App;
   root: string;
-  serverBaseUrl: string;
 }
 
 export class VaultWriter {
@@ -44,7 +44,7 @@ export class VaultWriter {
 
     // Ensure folder exists.
     const folder = normalizePath(root);
-    if (!(await app.vault.adapter.exists(folder))) {
+    if (!app.vault.getAbstractFileByPath(folder)) {
       await app.vault.createFolder(folder);
     }
 
@@ -125,7 +125,7 @@ export class VaultWriter {
     const yaml = [
       "---",
       `cordari_id: ${d.id}`,
-      `cordari_url: ${this.opts.serverBaseUrl.replace(/\/$/, "")}/recordings/${d.id}`,
+      `cordari_url: ${CORDARI_SERVER_URL}/recordings/${d.id}`,
       `cordari_writer_version: ${WRITER_VERSION}`,
       `date: ${new Date(d.startTime).toISOString()}`,
       `duration_ms: ${d.durationMs}`,

@@ -1,0 +1,16 @@
+.cordari-device-code {
+  text-align: center;
+  font-size: 2em;
+  letter-spacing: 0.2em;
+  font-family: monospace;
+}
+
+.cordari-device-link {
+  display: block;
+  text-align: center;
+  margin-top: 1em;
+}
+
+.cordari-device-pending {
+  text-align: center;
+}

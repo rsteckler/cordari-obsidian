@@ -66,8 +66,10 @@ async function jsonFetch<T>(call: JsonCall): Promise<T> {
   return res.json as T;
 }
 
-export function createClient(serverUrl: string, token: string | null) {
-  const base = serverUrl.replace(/\/$/, "");
+export const CORDARI_SERVER_URL = "https://app.cordari.ai";
+
+export function createClient(token: string | null) {
+  const base = CORDARI_SERVER_URL;
   return {
     startDeviceCode(clientName: string): Promise<DeviceCodeResponse> {
       return jsonFetch<DeviceCodeResponse>({

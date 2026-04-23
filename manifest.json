@@ -5,7 +5,6 @@
   "minAppVersion": "1.4.0",
   "description": "Sync your Cordari voice-recording summaries, transcripts, and audio into your vault.",
   "author": "Cordari",
-  "authorUrl": "https://app.cordari.ai",
-  "fundingUrl": "https://app.cordari.ai",
+  "authorUrl": "https://cordari.ai",
   "isDesktopOnly": true
 }
