@@ -89,7 +89,7 @@ export class VaultWriter {
       await app.vault.modify(after, markdown);
       return after;
     }
-    return (await app.vault.create(targetPath, markdown)) as TFile;
+    return await app.vault.create(targetPath, markdown);
   }
 
   /** Return the TFile whose frontmatter has `cordari_id === id`, if any. */
@@ -112,7 +112,7 @@ export class VaultWriter {
   private findExistingAudio(id: string): TFile | null {
     const suffix = `__${id.slice(0, 8)}.ogg`;
     const root = this.opts.root;
-    for (const f of this.opts.app.vault.getFiles() as TFile[]) {
+    for (const f of this.opts.app.vault.getFiles()) {
       if (f.extension !== "ogg") continue;
       if (!f.path.startsWith(root + "/")) continue;
       if (f.path.endsWith(suffix)) return f;
@@ -189,7 +189,7 @@ function sanitizeForFs(name: string): string {
 
 /** Single-line YAML string escape — wraps in double quotes if needed. */
 function yamlEscape(s: string): string {
-  if (/[:#\[\]{}&*!|>'"%@`]|^[-?]|\s\s/.test(s)) {
+  if (/[:#[\]{}&*!|>'"%@`]|^[-?]|\s\s/.test(s)) {
     return `"${s.replace(/\\/g, "\\\\").replace(/"/g, "\\\"")}"`;
   }
   return s;

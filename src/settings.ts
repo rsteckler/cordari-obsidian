@@ -73,7 +73,7 @@ export class CordariSettingTab extends PluginSettingTab {
     if (connected) {
       new Setting(containerEl)
         .setName("Disconnect")
-        .setDesc("Clears the token locally. Revoke from app.cordari.ai Settings → Integrations to fully invalidate.")
+        .setDesc("Clears the token locally. Revoke at app.cordari.ai to fully invalidate.")
         .addButton((btn) =>
           btn
             .setButtonText("Disconnect")
@@ -120,7 +120,7 @@ class DeviceLinkModal extends Modal {
   }
 
   onOpen(): void {
-    this.titleEl.setText("Connect Cordari");
+    this.titleEl.setText("Link your vault");
     this.contentEl.empty();
     this.contentEl.createEl("p", { text: "Starting authorization…" });
 

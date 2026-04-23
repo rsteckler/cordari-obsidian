@@ -1,4 +1,4 @@
-import { Notice, normalizePath, type App, type TFile } from "obsidian";
+import { Notice, normalizePath, type App } from "obsidian";
 import { ApiError, type ApiClient } from "./api.js";
 import type { RecordingRow } from "./types.js";
 import { buildBaseName, VaultWriter, WRITER_VERSION } from "./writer.js";
@@ -29,7 +29,7 @@ interface LocalEntry {
 function buildLocalIndex(app: App, root: string): Map<string, LocalEntry> {
   const cache = new Map<string, LocalEntry>();
   const prefix = root.endsWith("/") ? root : `${root}/`;
-  for (const f of app.vault.getMarkdownFiles() as TFile[]) {
+  for (const f of app.vault.getMarkdownFiles()) {
     if (!f.path.startsWith(prefix)) continue;
     const fm = app.metadataCache.getFileCache(f)?.frontmatter as
       | Record<string, unknown>
@@ -63,7 +63,7 @@ export async function runSync(opts: SyncOpts): Promise<void> {
   });
 
   const localIndex = buildLocalIndex(opts.app, opts.root);
-  console.info("[Cordari] sync start", { localKnown: localIndex.size });
+  console.debug("[Cordari] sync start", { localKnown: localIndex.size });
 
   let offset = 0;
   let scanned = 0;
@@ -88,7 +88,7 @@ export async function runSync(opts: SyncOpts): Promise<void> {
           const r = await syncOne(row, opts.client, writer, opts.root, opts.app);
           synced++;
           if (r.audioReused) audioReused++;
-          console.info("[Cordari] synced", {
+          console.debug("[Cordari] synced", {
             id: row.id,
             filename: row.filename,
             status: row.status,
@@ -109,7 +109,7 @@ export async function runSync(opts: SyncOpts): Promise<void> {
       offset += pageSize;
     }
 
-    console.info("[Cordari] sync done", { scanned, synced, skipped, audioReused });
+    console.debug("[Cordari] sync done", { scanned, synced, skipped, audioReused });
   } catch (err) {
     if (err instanceof ApiError && err.status === 401) {
       opts.onUnauthorized();

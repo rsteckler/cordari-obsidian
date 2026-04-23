@@ -18,8 +18,8 @@ export default class CordariPlugin extends Plugin {
     });
 
     this.addCommand({
-      id: "cordari-sync-now",
-      name: "Sync Cordari recordings",
+      id: "sync-now",
+      name: "Sync recordings",
       callback: () => void this.syncNow(),
     });
 
@@ -70,7 +70,7 @@ export default class CordariPlugin extends Plugin {
    */
   async syncNow(): Promise<void> {
     if (!this.settings.token) {
-      new Notice("Cordari: not connected. Open Settings → Cordari → Connect.");
+      new Notice("Cordari: not connected. Open the plugin settings to link.");
       return;
     }
     if (this.syncing) {
@@ -85,7 +85,7 @@ export default class CordariPlugin extends Plugin {
         client,
         root: this.settings.root,
         onUnauthorized: () => {
-          new Notice("Cordari: connection expired. Re-link from Settings → Cordari.");
+          new Notice("Cordari: connection expired. Open the plugin settings to re-link.");
           this.settings.token = null;
           this.settings.connectedName = null;
           void this.saveSettings();
