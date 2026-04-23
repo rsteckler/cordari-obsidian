@@ -66,7 +66,7 @@ requires re-linking next time.
 ## Support
 
 File issues at
-[github.com/rsteckler/applaud-cloud](https://github.com/rsteckler/applaud-cloud/issues)
+[github.com/rsteckler/cordari-cloud](https://github.com/rsteckler/cordari-cloud/issues)
 or reach out via [app.cordari.ai](https://app.cordari.ai).
 
 ## License
