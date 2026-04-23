@@ -1,6 +1,6 @@
-# Applaud for Obsidian
+# Cordari for Obsidian
 
-Sync your [Applaud](https://app.applaudnotes.com) voice recordings into your
+Sync your [Cordari](https://app.cordari.ai) voice recordings into your
 Obsidian vault as markdown files — one page per recording, with the audio
 embedded inline, the Plaud-generated summary, and the full transcript.
 
@@ -8,8 +8,8 @@ embedded inline, the Plaud-generated summary, and the full transcript.
 
 Each sync pass:
 
-- Creates `Applaud/{date}_{filename}__{shortId}.md` per recording, with YAML
-  frontmatter (`applaud_id`, `applaud_url`, `date`, `duration_ms`, `filename`,
+- Creates `Cordari/{date}_{filename}__{shortId}.md` per recording, with YAML
+  frontmatter (`cordari_id`, `cordari_url`, `date`, `duration_ms`, `filename`,
   `state`).
 - Saves the recording's audio next to the markdown as `.ogg` so it plays in
   Reading Mode via `![[...ogg]]`.
@@ -18,11 +18,11 @@ Each sync pass:
   anything you deleted from the vault gets rewritten on the next sync.
 
 The plugin only sends read requests; nothing in your vault is pushed back
-to Applaud.
+to Cordari.
 
 ## Requirements
 
-- An Applaud Pro account (free tier doesn't grant API access).
+- A Cordari Pro account (free tier doesn't grant API access).
 - Obsidian 1.4.0+ on desktop (macOS / Windows / Linux). Mobile isn't
   supported yet — the plugin declares `isDesktopOnly: true`.
 
@@ -31,22 +31,22 @@ to Applaud.
 ### From the community plugin marketplace (once listed)
 
 1. Obsidian → Settings → Community plugins → Browse.
-2. Search for **Applaud**, install, enable.
-3. Open the plugin's settings and click **Connect to Applaud**.
+2. Search for **Cordari**, install, enable.
+3. Open the plugin's settings and click **Connect to Cordari**.
 
 ### Side-load (for testing or while the marketplace listing is pending)
 
-1. Build: `pnpm --filter @applaud/obsidian build` from the repo root.
+1. Build: `pnpm --filter @cordari/obsidian build` from the repo root.
 2. Copy `dist/main.js`, `manifest.json`, and `versions.json` into
-   `<your-vault>/.obsidian/plugins/applaud-notes/`.
+   `<your-vault>/.obsidian/plugins/cordari-notes/`.
 3. Obsidian → Settings → Community plugins → turn off Restricted mode,
-   refresh the installed plugins list, enable **Applaud**.
+   refresh the installed plugins list, enable **Cordari**.
 
 ## Linking the plugin to your account
 
-1. Open Settings → **Applaud** → **Connect to Applaud**.
-2. The plugin shows an 8-character code + a link to `app.applaudnotes.com/link`.
-3. Open the link in your browser (already signed in as your Applaud user),
+1. Open Settings → **Cordari** → **Connect to Cordari**.
+2. The plugin shows an 8-character code + a link to `app.cordari.ai/link`.
+3. Open the link in your browser (already signed in as your Cordari user),
    paste the code, approve. Obsidian picks up the approval within a few
    seconds.
 
@@ -56,9 +56,9 @@ requires re-linking next time.
 
 ## Settings
 
-- **Server URL** — defaults to `https://app.applaudnotes.com`. Change only
-  if you self-host Applaud.
-- **Vault folder** — where recording files live. Default `Applaud`.
+- **Server URL** — defaults to `https://app.cordari.ai`. Change only
+  if you self-host Cordari.
+- **Vault folder** — where recording files live. Default `Cordari`.
 - **Auto-sync interval** — minutes between polls. Minimum 1, default 5.
 - **Sync now** — runs the loop immediately (also available as a ribbon
   icon and command palette entry).
@@ -67,7 +67,7 @@ requires re-linking next time.
 
 File issues at
 [github.com/rsteckler/applaud-cloud](https://github.com/rsteckler/applaud-cloud/issues)
-or reach out via [app.applaudnotes.com](https://app.applaudnotes.com).
+or reach out via [app.cordari.ai](https://app.cordari.ai).
 
 ## License
 

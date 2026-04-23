@@ -1,4 +1,4 @@
-// Shapes mirrored from the Applaud server. The plugin bundle is a single
+// Shapes mirrored from the Cordari server. The plugin bundle is a single
 // CommonJS file sent to users, so we can't depend on the server's shared
 // package at build time — copy the subset we use.
 
@@ -40,7 +40,7 @@ export interface RecordingRow {
 
 export interface Summary {
   id: string;
-  source: "plaud" | "applaud";
+  source: "plaud" | "cordari";
   title: string | null;
   tabName: string | null;
   plaudTemplateId: string | null;

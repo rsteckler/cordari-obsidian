@@ -2,13 +2,13 @@ import { normalizePath, TFile, type App } from "obsidian";
 import type { RecordingDetail } from "./types.js";
 
 // Writes the per-recording markdown + audio into the vault and keeps them
-// up to date on re-sync. Lookup by `applaud_id` in YAML frontmatter so
+// up to date on re-sync. Lookup by `cordari_id` in YAML frontmatter so
 // renames (either side) never create duplicates — we rewrite the existing
-// file in place, same applaud_id → same TFile.
+// file in place, same cordari_id → same TFile.
 
 /**
  * Bump this any time composeMarkdown's layout or wording changes. Files
- * whose frontmatter `applaud_writer_version` is below this value get
+ * whose frontmatter `cordari_writer_version` is below this value get
  * re-synced so stale content (old stubs, dropped fields, reshaped
  * sections) doesn't linger in the vault forever.
  *
@@ -16,8 +16,13 @@ import type { RecordingDetail } from "./types.js";
  *   v2 — multi-summary support; switched from `summaryMarkdown` to
  *        `summaries[]` rendering; new "_summary pending_" stub text
  *        replaced "_(no summary available)_".
+ *   v3 — rebrand Applaud → Cordari. Frontmatter keys switched from
+ *        `applaud_id` / `applaud_url` / `applaud_writer_version` to
+ *        `cordari_*`. Notes written by pre-v3 plugin builds look
+ *        "local-missing" to the sync layer (new keys absent) and get
+ *        fully rewritten on the next pass.
  */
-export const WRITER_VERSION = 2;
+export const WRITER_VERSION = 3;
 
 export interface WriterOpts {
   app: App;
@@ -87,14 +92,14 @@ export class VaultWriter {
     return (await app.vault.create(targetPath, markdown)) as TFile;
   }
 
-  /** Return the TFile whose frontmatter has `applaud_id === id`, if any. */
+  /** Return the TFile whose frontmatter has `cordari_id === id`, if any. */
   private findExistingFile(id: string): TFile | null {
     const files = this.opts.app.vault.getMarkdownFiles();
     for (const f of files) {
       if (!f.path.startsWith(this.opts.root + "/")) continue;
       const cache = this.opts.app.metadataCache.getFileCache(f);
       const fm = cache?.frontmatter as Record<string, unknown> | undefined;
-      if (fm?.applaud_id === id) return f;
+      if (fm?.cordari_id === id) return f;
     }
     return null;
   }
@@ -119,9 +124,9 @@ export class VaultWriter {
     const state = d.status;
     const yaml = [
       "---",
-      `applaud_id: ${d.id}`,
-      `applaud_url: ${this.opts.serverBaseUrl.replace(/\/$/, "")}/recordings/${d.id}`,
-      `applaud_writer_version: ${WRITER_VERSION}`,
+      `cordari_id: ${d.id}`,
+      `cordari_url: ${this.opts.serverBaseUrl.replace(/\/$/, "")}/recordings/${d.id}`,
+      `cordari_writer_version: ${WRITER_VERSION}`,
       `date: ${new Date(d.startTime).toISOString()}`,
       `duration_ms: ${d.durationMs}`,
       `filename: ${yamlEscape(d.filename)}`,

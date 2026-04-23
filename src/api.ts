@@ -9,7 +9,7 @@ import {
 /**
  * Thin wrapper around Obsidian's `requestUrl`. Using requestUrl instead of
  * the browser `fetch` is important: it runs through Electron's main
- * process so our CORS restrictions on the Applaud API don't apply. A
+ * process so our CORS restrictions on the Cordari API don't apply. A
  * plain fetch from the renderer would carry an `Origin: app://obsidian.md`
  * header that the server's CORS allowlist rejects.
  *

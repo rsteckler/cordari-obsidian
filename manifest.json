@@ -1,11 +1,11 @@
 {
-  "id": "applaud-notes",
-  "name": "Applaud",
+  "id": "cordari-notes",
+  "name": "Cordari",
   "version": "0.1.0",
   "minAppVersion": "1.4.0",
-  "description": "Sync your Applaud voice-recording summaries, transcripts, and audio into your vault.",
-  "author": "Applaud",
-  "authorUrl": "https://app.applaudnotes.com",
-  "fundingUrl": "https://app.applaudnotes.com",
+  "description": "Sync your Cordari voice-recording summaries, transcripts, and audio into your vault.",
+  "author": "Cordari",
+  "authorUrl": "https://app.cordari.ai",
+  "fundingUrl": "https://app.cordari.ai",
   "isDesktopOnly": true
 }

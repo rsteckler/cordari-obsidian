@@ -1,8 +1,8 @@
 import { App, Modal, Notice, PluginSettingTab, Setting } from "obsidian";
-import type ApplaudPlugin from "./main.js";
+import type CordariPlugin from "./main.js";
 import { createClient } from "./api.js";
 
-export interface ApplaudSettings {
+export interface CordariSettings {
   serverUrl: string;
   token: string | null;
   root: string;
@@ -11,17 +11,17 @@ export interface ApplaudSettings {
   connectedName: string | null;
 }
 
-export const DEFAULT_SETTINGS: ApplaudSettings = {
-  serverUrl: "https://app.applaudnotes.com",
+export const DEFAULT_SETTINGS: CordariSettings = {
+  serverUrl: "https://app.cordari.ai",
   token: null,
-  root: "Applaud",
+  root: "Cordari",
   pollMinutes: 5,
   lastSyncAt: 0,
   connectedName: null,
 };
 
-export class ApplaudSettingTab extends PluginSettingTab {
-  constructor(app: App, private readonly plugin: ApplaudPlugin) {
+export class CordariSettingTab extends PluginSettingTab {
+  constructor(app: App, private readonly plugin: CordariPlugin) {
     super(app, plugin);
   }
 
@@ -29,19 +29,19 @@ export class ApplaudSettingTab extends PluginSettingTab {
     const { containerEl } = this;
     containerEl.empty();
 
-    containerEl.createEl("h2", { text: "Applaud" });
+    containerEl.createEl("h2", { text: "Cordari" });
 
     const connected = !!this.plugin.settings.token;
 
     new Setting(containerEl)
       .setName("Server URL")
-      .setDesc("Only change this if you self-host Applaud.")
+      .setDesc("Only change this if you self-host Cordari.")
       .addText((text) =>
         text
-          .setPlaceholder("https://app.applaudnotes.com")
+          .setPlaceholder("https://app.cordari.ai")
           .setValue(this.plugin.settings.serverUrl)
           .onChange(async (value) => {
-            this.plugin.settings.serverUrl = value.trim() || "https://app.applaudnotes.com";
+            this.plugin.settings.serverUrl = value.trim() || "https://app.cordari.ai";
             await this.plugin.saveSettings();
           }),
       );
@@ -51,10 +51,10 @@ export class ApplaudSettingTab extends PluginSettingTab {
       .setDesc("Recordings will be stored under this folder in your vault.")
       .addText((text) =>
         text
-          .setPlaceholder("Applaud")
+          .setPlaceholder("Cordari")
           .setValue(this.plugin.settings.root)
           .onChange(async (value) => {
-            this.plugin.settings.root = value.trim() || "Applaud";
+            this.plugin.settings.root = value.trim() || "Cordari";
             await this.plugin.saveSettings();
           }),
       );
@@ -82,7 +82,7 @@ export class ApplaudSettingTab extends PluginSettingTab {
       )
       .addButton((btn) =>
         btn
-          .setButtonText(connected ? "Re-link" : "Connect to Applaud")
+          .setButtonText(connected ? "Re-link" : "Connect to Cordari")
           .setCta()
           .onClick(() => new DeviceLinkModal(this.app, this.plugin, () => this.display()).open()),
       );
@@ -90,7 +90,7 @@ export class ApplaudSettingTab extends PluginSettingTab {
     if (connected) {
       new Setting(containerEl)
         .setName("Disconnect")
-        .setDesc("Clears the token locally. Revoke from app.applaudnotes.com Settings → Integrations to fully invalidate.")
+        .setDesc("Clears the token locally. Revoke from app.cordari.ai Settings → Integrations to fully invalidate.")
         .addButton((btn) =>
           btn
             .setButtonText("Disconnect")
@@ -99,7 +99,7 @@ export class ApplaudSettingTab extends PluginSettingTab {
               this.plugin.settings.token = null;
               this.plugin.settings.connectedName = null;
               await this.plugin.saveSettings();
-              new Notice("Applaud: disconnected.");
+              new Notice("Cordari: disconnected.");
               this.display();
             }),
         );
@@ -128,14 +128,14 @@ class DeviceLinkModal extends Modal {
 
   constructor(
     app: App,
-    private readonly plugin: ApplaudPlugin,
+    private readonly plugin: CordariPlugin,
     private readonly onDone: () => void,
   ) {
     super(app);
   }
 
   onOpen(): void {
-    this.titleEl.setText("Connect Applaud");
+    this.titleEl.setText("Connect Cordari");
     this.contentEl.empty();
     this.contentEl.createEl("p", { text: "Starting authorization…" });
 
@@ -191,7 +191,7 @@ class DeviceLinkModal extends Modal {
 
     this.contentEl.createEl("p", {
       text: "Waiting for approval…",
-      cls: "applaud-pending",
+      cls: "cordari-pending",
     }).style.textAlign = "center";
   }
 
@@ -204,7 +204,7 @@ class DeviceLinkModal extends Modal {
         this.plugin.settings.connectedName = "Obsidian";
         this.plugin.settings.lastSyncAt = 0;
         await this.plugin.saveSettings();
-        new Notice("Applaud: connected.");
+        new Notice("Cordari: connected.");
         if (this.pollHandle !== null) {
           window.clearInterval(this.pollHandle);
           this.pollHandle = null;
@@ -223,7 +223,7 @@ class DeviceLinkModal extends Modal {
       }
       // authorization_pending / server_error: keep waiting.
     } catch (err) {
-      console.warn("[Applaud] device poll error", err);
+      console.warn("[Cordari] device poll error", err);
     }
   }
 

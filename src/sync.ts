@@ -18,7 +18,7 @@ interface LocalEntry {
 }
 
 /**
- * Scan the Applaud folder once per sync and return an applaud_id → local
+ * Scan the Cordari folder once per sync and return a cordari_id → local
  * state map from YAML frontmatter. Used to:
  *   - detect Plaud-side renames on complete recordings (re-fetch to
  *     update filename in frontmatter and rename the TFile),
@@ -35,12 +35,12 @@ function buildLocalIndex(app: App, root: string): Map<string, LocalEntry> {
     const fm = app.metadataCache.getFileCache(f)?.frontmatter as
       | Record<string, unknown>
       | undefined;
-    const id = typeof fm?.applaud_id === "string" ? fm.applaud_id : null;
+    const id = typeof fm?.cordari_id === "string" ? fm.cordari_id : null;
     const filename = typeof fm?.filename === "string" ? fm.filename : null;
     // Missing / non-numeric version means the file was written by a
-    // pre-versioning plugin build; treat as v0 so reasonToSync triggers
-    // a rewrite on the next pass.
-    const rawVersion = fm?.applaud_writer_version;
+    // pre-versioning plugin build (or a pre-rebrand build); treat as
+    // v0 so reasonToSync triggers a rewrite on the next pass.
+    const rawVersion = fm?.cordari_writer_version;
     const writerVersion = typeof rawVersion === "number" ? rawVersion : 0;
     if (id && filename) cache.set(id, { filename, mdPath: f.path, writerVersion });
   }
@@ -65,7 +65,7 @@ export async function runSync(opts: SyncOpts): Promise<void> {
   });
 
   const localIndex = buildLocalIndex(opts.app, opts.root);
-  console.info("[Applaud] sync start", { localKnown: localIndex.size });
+  console.info("[Cordari] sync start", { localKnown: localIndex.size });
 
   let offset = 0;
   let scanned = 0;
@@ -90,7 +90,7 @@ export async function runSync(opts: SyncOpts): Promise<void> {
           const r = await syncOne(row, opts.client, writer, opts.root, opts.app);
           synced++;
           if (r.audioReused) audioReused++;
-          console.info("[Applaud] synced", {
+          console.info("[Cordari] synced", {
             id: row.id,
             filename: row.filename,
             status: row.status,
@@ -100,7 +100,7 @@ export async function runSync(opts: SyncOpts): Promise<void> {
           });
         } catch (err) {
           if (err instanceof ApiError && err.status === 401) throw err;
-          console.warn("[Applaud] syncOne failed; continuing", {
+          console.warn("[Cordari] syncOne failed; continuing", {
             id: row.id,
             err: err instanceof Error ? err.message : String(err),
           });
@@ -111,14 +111,14 @@ export async function runSync(opts: SyncOpts): Promise<void> {
       offset += pageSize;
     }
 
-    console.info("[Applaud] sync done", { scanned, synced, skipped, audioReused });
+    console.info("[Cordari] sync done", { scanned, synced, skipped, audioReused });
   } catch (err) {
     if (err instanceof ApiError && err.status === 401) {
       opts.onUnauthorized();
       return;
     }
-    console.error("[Applaud] sync failed", err);
-    new Notice(`Applaud sync failed: ${err instanceof Error ? err.message : String(err)}`);
+    console.error("[Cordari] sync failed", err);
+    new Notice(`Cordari sync failed: ${err instanceof Error ? err.message : String(err)}`);
   }
 }
 
@@ -127,7 +127,7 @@ export async function runSync(opts: SyncOpts): Promise<void> {
  * if the local state is already correct. Checks in this order:
  *   1. Not complete on the server — pending transcript/summary may still
  *      arrive; re-fetch so the file stays current.
- *   2. No local .md with this applaud_id — either never synced or the
+ *   2. No local .md with this cordari_id — either never synced or the
  *      user/sync error deleted it; re-push.
  *   3. Local md exists but at the wrong path for the current filename —
  *      Plaud (or the user) renamed the recording.
@@ -182,7 +182,7 @@ async function syncOne(
     try {
       audioBytes = await client.downloadBinary(detail.audioUrl);
     } catch (err) {
-      console.warn("[Applaud] audio download failed; continuing without it", err);
+      console.warn("[Cordari] audio download failed; continuing without it", err);
     }
   } else if (r.audioDownloadedAt && audioExists) {
     audioReused = true;

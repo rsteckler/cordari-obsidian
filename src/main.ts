@@ -1,25 +1,25 @@
 import { Notice, Plugin } from "obsidian";
 import { createClient } from "./api.js";
-import { ApplaudSettingTab, DEFAULT_SETTINGS, type ApplaudSettings } from "./settings.js";
+import { CordariSettingTab, DEFAULT_SETTINGS, type CordariSettings } from "./settings.js";
 import { runSync } from "./sync.js";
 
-export default class ApplaudPlugin extends Plugin {
-  settings: ApplaudSettings = DEFAULT_SETTINGS;
+export default class CordariPlugin extends Plugin {
+  settings: CordariSettings = DEFAULT_SETTINGS;
   private syncing = false;
   private autoSyncHandle: number | null = null;
 
   async onload(): Promise<void> {
     await this.loadSettings();
 
-    this.addSettingTab(new ApplaudSettingTab(this.app, this));
+    this.addSettingTab(new CordariSettingTab(this.app, this));
 
-    this.addRibbonIcon("refresh-cw", "Sync Applaud recordings", () => {
+    this.addRibbonIcon("refresh-cw", "Sync Cordari recordings", () => {
       void this.syncNow();
     });
 
     this.addCommand({
-      id: "applaud-sync-now",
-      name: "Sync Applaud recordings",
+      id: "cordari-sync-now",
+      name: "Sync Cordari recordings",
       callback: () => void this.syncNow(),
     });
 
@@ -70,11 +70,11 @@ export default class ApplaudPlugin extends Plugin {
    */
   async syncNow(): Promise<void> {
     if (!this.settings.token) {
-      new Notice("Applaud: not connected. Open Settings → Applaud → Connect.");
+      new Notice("Cordari: not connected. Open Settings → Cordari → Connect.");
       return;
     }
     if (this.syncing) {
-      new Notice("Applaud: sync already in progress.");
+      new Notice("Cordari: sync already in progress.");
       return;
     }
     this.syncing = true;
@@ -86,7 +86,7 @@ export default class ApplaudPlugin extends Plugin {
         serverBaseUrl: this.settings.serverUrl,
         root: this.settings.root,
         onUnauthorized: () => {
-          new Notice("Applaud: connection expired. Re-link from Settings → Applaud.");
+          new Notice("Cordari: connection expired. Re-link from Settings → Cordari.");
           this.settings.token = null;
           this.settings.connectedName = null;
           void this.saveSettings();

@@ -1,8 +1,8 @@
 {
-  "name": "@applaud/obsidian",
+  "name": "@cordari/obsidian",
   "version": "0.1.0",
   "private": true,
-  "description": "Applaud Obsidian plugin",
+  "description": "Cordari Obsidian plugin",
   "main": "dist/main.js",
   "scripts": {
     "dev": "node esbuild.config.mjs",
